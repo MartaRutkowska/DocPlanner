@@ -1,6 +1,8 @@
-﻿using DocPlanner.Models.Request;
+﻿using DocPlanner.Helpers;
+using DocPlanner.Models.Request;
 using DocPlanner.Models.Response;
 using DocPlanner.Services;
+using DocPlanner.Validators;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DocPlanner.Controllers
@@ -13,11 +15,13 @@ namespace DocPlanner.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetAsync(string date)
+        public async Task<IActionResult> GetAsync(DateTime date)
         {
-            //data validation could be added but I aint got time
+            var dateValid = new DateValidator().Validate(date.Date);
+            if (!dateValid.IsValid) return BadRequest("Provide current or future date");
 
-            var result = await slotService.CreateSlotsAsync(date);
+            var monday = DateHelper.GetLastMonday(date);
+            var result = await slotService.CreateSlotsAsync(monday.ToString("yyyyMMdd"));
             return result != null? Ok(result) : BadRequest();
         }
 
@@ -26,7 +30,8 @@ namespace DocPlanner.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PostAsync([FromBody] Appointment appointment)
         {
-            // appointment validation could be added but I aint got time
+            var appInfoValid = new AppointmentValidator().Validate(appointment);
+            if (!appInfoValid.IsValid) return BadRequest("Please provide correct dates needed for an appointment and proper email address");
 
             var result = await slotService.BookSlot(appointment);
             return result? Ok(result) : BadRequest();
