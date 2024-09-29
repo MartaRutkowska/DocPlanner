@@ -1,9 +1,12 @@
 # DocPlanner
 
- To run: open in visual studio and run. There will be Swagger UI available
-
- Two endpoints available: 
+ To run the app: Open in visual studio, choose project DocPlanner as start up project, build and run. There will be Swagger UI available.
  
+ To run the tests: Right click on DocPlannerTests -> Run tests
+
+--------
+
+ There are two endpoints available: 
 ### GET  slots: 
 provide date in DateTime format to receive list of all available slots
 - date must be equal or greater than current time
